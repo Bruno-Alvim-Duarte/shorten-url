@@ -1,0 +1,43 @@
+name: shorten-url-backend
+
+services:
+  database:
+    container_name: shorten-url-database
+    image: postgres:alpine
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    env_file:
+    - path: ./.env
+      required: true
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_PORT=${DB_PORT}
+    ports:
+      - '${DB_PORT}:5432'
+    restart: always
+
+  app:
+    container_name: shorten-url-app
+    build:
+      context: .
+      target: development
+    environment:
+      - PORT=${PORT}
+    env_file:
+     - path: ./.env
+       required: true
+    ports:
+      - 8080:80
+    volumes:
+      - ./src:/app/src
+      - ./test:/app/test
+      - ./package.json:/app/package.json
+      - ./tsconfig.json:/app/tsconfig.json
+    depends_on:
+      - database
+    restart: always
+
+volumes:
+  pg-data:
