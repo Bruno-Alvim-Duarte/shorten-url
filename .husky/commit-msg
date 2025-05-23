@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+
+# Get the commit message (the first argument is the path to the temporary file that contains the message)
+message=$(cat "$1")
+
+# Define the allowed patterns
+patterns="^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?: .+"
+
+if ! echo "$message" | grep -qE "$patterns"; then
+    echo "❌ Invalid commit message format."
+    echo "Commit message must start with one of: feat:, fix:, docs:, style:, refactor:, test:, chore:, perf:, ci:, build:, revert:"
+    echo "Example: feat: add new feature"
+    echo "Current message: $message"
+    exit 1
+fi
