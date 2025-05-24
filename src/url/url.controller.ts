@@ -1,13 +1,24 @@
-import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Res,
+  UsePipes,
+} from '@nestjs/common';
 import { UrlService } from './url.service';
 import { Response } from 'express';
+import { CreateUrlDto, createUrlSchema } from './schemas';
+import { ZodValidationPipe } from 'src/zod-validation/zod-validation.pipe';
 
 @Controller()
 export class UrlController {
   constructor(private readonly urlService: UrlService) {}
 
   @Post('shorten-url')
-  async shortenUrl(@Body() body: { url: string }) {
+  @UsePipes(new ZodValidationPipe(createUrlSchema))
+  async shortenUrl(@Body() body: CreateUrlDto) {
     return this.urlService.shortenUrl(body.url);
   }
 
