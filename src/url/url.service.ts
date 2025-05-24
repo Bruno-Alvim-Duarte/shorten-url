@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { customAlphabet, urlAlphabet } from 'nanoid';
 import { PrismaService } from 'src/prisma.service';
 
@@ -13,13 +17,21 @@ export class UrlService {
   ): Promise<{ shortUrl: string; originalUrl: string }> {
     let shortId: string;
     let existingUrl: any;
+    let attempts = 0;
 
     do {
       shortId = this.nanoid();
       existingUrl = await this.prisma.url.findUnique({
         where: { shortUrl: shortId },
       });
-    } while (existingUrl);
+      attempts += 1;
+    } while (existingUrl && attempts < 10);
+
+    // Se o loop não encontrar uma URL válida, lança um erro interno.
+    // Isso é uma medida de segurança para evitar loops infinitos. Mas a chance de em 10 tentativas não encontrar uma URL válida é quase nula.
+    if (existingUrl) {
+      throw new InternalServerErrorException('Erro ao gerar URL encurtada');
+    }
 
     await this.prisma.url.create({
       data: {
@@ -35,6 +47,9 @@ export class UrlService {
     const url = await this.prisma.url.findUnique({
       where: { shortUrl },
     });
+    if (!url) {
+      throw new NotFoundException('URL não encontrada');
+    }
     return { originalUrl: url.originalUrl };
   }
 }
