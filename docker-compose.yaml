@@ -7,8 +7,8 @@ services:
     volumes:
       - pg-data:/var/lib/postgresql/data
     env_file:
-    - path: ./.env
-      required: true
+      - path: ./.env
+        required: true
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASS}
@@ -18,26 +18,44 @@ services:
       - '${DB_PORT}:5432'
     restart: always
 
-  app:
-    container_name: shorten-url-app
+  url-shortener-service:
+    container_name: url-shortener-service
     build:
       context: .
+      dockerfile: services/url-shortener-service/Dockerfile
       target: development
     environment:
       - PORT=${PORT}
     env_file:
-     - path: ./.env
-       required: true
+      - path: ./.env
+        required: true
     ports:
       - 8080:80
     volumes:
-      - ./src:/app/src
-      - ./test:/app/test
-      - ./package.json:/app/package.json
-      - ./tsconfig.json:/app/tsconfig.json
+      - ./services/url-shortener-service:/app
+      - /app/node_modules
     depends_on:
       - database
     restart: always
+
+  iam-service:
+    container_name: iam-service
+    build:
+      context: .
+      dockerfile: services/iam-service/Dockerfile
+      target: development
+    environment:
+      - PORT=${PORT}
+    env_file:
+      - path: ./.env
+        required: true
+    ports:
+      - 8081:80
+    volumes:
+      - ./services/iam-service:/app
+      - /app/node_modules
+    depends_on:
+      - database
 
 volumes:
   pg-data:

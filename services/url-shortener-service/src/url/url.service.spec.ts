@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UrlService } from './url.service';
-import { PrismaService } from '../prisma.service';
 import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+import { PrismaService } from 'src/prisma.service';
 
 describe('UrlService', () => {
   let service: UrlService;
