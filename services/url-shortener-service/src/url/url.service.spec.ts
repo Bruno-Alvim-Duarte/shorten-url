@@ -57,9 +57,12 @@ describe('UrlService', () => {
       const result = await service.shortenUrl(originalUrl, userId);
 
       expect(result).toEqual({
-        shortUrl: expect.any(String),
-        originalUrl,
-        userId,
+        url: {
+          shortUrl: expect.any(String),
+          originalUrl,
+          userId,
+        },
+        message: 'URL encurtada com sucesso',
       });
     });
 
@@ -73,8 +76,10 @@ describe('UrlService', () => {
       const result = await service.shortenUrl(originalUrl);
 
       expect(result).toEqual({
-        shortUrl: expect.any(String),
-        originalUrl,
+        url: {
+          shortUrl: expect.any(String),
+          originalUrl,
+        },
         message:
           'Autentique-se para ter acesso a benefícios como listar, atualizar e remover suas URLs encurtadas',
       });
@@ -82,8 +87,13 @@ describe('UrlService', () => {
         data: {
           originalUrl,
           shortUrl: expect.any(String),
-          message:
-            'Autentique-se para ter acesso a benefícios como listar, atualizar e remover suas URLs encurtadas',
+        },
+        include: {
+          user: {
+            select: {
+              name: true,
+            },
+          },
         },
       });
     });
@@ -114,7 +124,7 @@ describe('UrlService', () => {
 
       expect(result).toEqual({ originalUrl });
       expect(mockPrismaService.url.findUnique).toHaveBeenCalledWith({
-        where: { shortUrl },
+        where: { shortUrl, deletedAt: null },
       });
       expect(mockPrismaService.url.update).toHaveBeenCalledWith({
         where: { shortUrl },
@@ -129,7 +139,7 @@ describe('UrlService', () => {
         NotFoundException,
       );
       expect(mockPrismaService.url.findUnique).toHaveBeenCalledWith({
-        where: { shortUrl },
+        where: { shortUrl, deletedAt: null },
       });
       expect(mockPrismaService.url.update).not.toHaveBeenCalled();
     });

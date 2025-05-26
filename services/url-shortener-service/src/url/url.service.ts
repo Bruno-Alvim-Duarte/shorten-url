@@ -1,10 +1,12 @@
 import {
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { customAlphabet, urlAlphabet } from 'nanoid';
 import { PrismaService } from 'src/prisma.service';
+import { UpdateUrlDto } from './schemas/url.schema';
 
 @Injectable()
 export class UrlService {
@@ -15,7 +17,7 @@ export class UrlService {
   async shortenUrl(
     url: string,
     userId?: string,
-  ): Promise<{ shortUrl: string; originalUrl: string }> {
+  ): Promise<{ url: any; message: string }> {
     let shortId: string;
     let existingUrl: any;
     let attempts = 0;
@@ -43,21 +45,32 @@ export class UrlService {
       data.userId = userId;
     }
 
-    await this.prisma.url.create({
+    const urlCreated = await this.prisma.url.create({
       data,
+      include: {
+        user: {
+          select: {
+            name: true,
+          },
+        },
+      },
     });
 
+    let message = 'URL encurtada com sucesso';
     if (!userId || userId === 'Token inválido') {
-      data.message =
+      message =
         'Autentique-se para ter acesso a benefícios como listar, atualizar e remover suas URLs encurtadas';
     }
 
-    return data;
+    return {
+      url: urlCreated,
+      message,
+    };
   }
 
   async getOriginalUrl(shortUrl: string): Promise<{ originalUrl: string }> {
     const url = await this.prisma.url.findUnique({
-      where: { shortUrl },
+      where: { shortUrl, deletedAt: null },
     });
     if (!url) {
       throw new NotFoundException('URL não encontrada');
@@ -67,5 +80,71 @@ export class UrlService {
       data: { accessCount: url.accessCount + 1 },
     });
     return { originalUrl: url.originalUrl };
+  }
+  async getUrls(userId: string) {
+    const urls = await this.prisma.url.findMany({
+      where: { userId, deletedAt: null },
+      include: {
+        user: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+    return urls;
+  }
+
+  async updateUrl(shortUrl: string, body: UpdateUrlDto, userId: string) {
+    const url = await this.prisma.url.findUnique({
+      where: { shortUrl, deletedAt: null },
+    });
+    if (!url) {
+      throw new NotFoundException('URL não encontrada');
+    }
+    if (url.userId !== userId) {
+      throw new ForbiddenException(
+        'Você não tem permissão para atualizar esta URL',
+      );
+    }
+    const urlUpdated = await this.prisma.url.update({
+      where: { shortUrl },
+      data: {
+        originalUrl: body.url,
+        accessCount: 0,
+      },
+      include: {
+        user: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+    return {
+      url: urlUpdated,
+      message: 'URL atualizada com sucesso, isso reseta o contador de acessos',
+    };
+  }
+
+  async deleteUrl(shortUrl: string, userId: string) {
+    const url = await this.prisma.url.findUnique({
+      where: { shortUrl, deletedAt: null },
+    });
+    if (!url) {
+      throw new NotFoundException('URL não encontrada');
+    }
+    if (url.userId !== userId) {
+      throw new ForbiddenException(
+        'Você não tem permissão para deletar esta URL',
+      );
+    }
+    await this.prisma.url.update({
+      where: { shortUrl },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+    return { message: 'URL deletada com sucesso' };
   }
 }
