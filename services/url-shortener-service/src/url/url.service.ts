@@ -62,6 +62,10 @@ export class UrlService {
     if (!url) {
       throw new NotFoundException('URL não encontrada');
     }
+    await this.prisma.url.update({
+      where: { shortUrl },
+      data: { accessCount: url.accessCount + 1 },
+    });
     return { originalUrl: url.originalUrl };
   }
 }

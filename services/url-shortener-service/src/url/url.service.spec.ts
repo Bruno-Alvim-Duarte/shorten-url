@@ -14,6 +14,7 @@ describe('UrlService', () => {
     url: {
       findUnique: jest.fn(),
       create: jest.fn(),
+      update: jest.fn(),
     },
   };
 
@@ -101,10 +102,12 @@ describe('UrlService', () => {
     const shortUrl = 'abc123';
     const originalUrl = 'https://example.com';
 
-    it('should return the original URL when found', async () => {
+    it('should return the original URL and increment accessCount when found', async () => {
+      const currentAccessCount = 5;
       mockPrismaService.url.findUnique.mockResolvedValueOnce({
         originalUrl,
         shortUrl,
+        accessCount: currentAccessCount,
       });
 
       const result = await service.getOriginalUrl(shortUrl);
@@ -112,6 +115,10 @@ describe('UrlService', () => {
       expect(result).toEqual({ originalUrl });
       expect(mockPrismaService.url.findUnique).toHaveBeenCalledWith({
         where: { shortUrl },
+      });
+      expect(mockPrismaService.url.update).toHaveBeenCalledWith({
+        where: { shortUrl },
+        data: { accessCount: currentAccessCount + 1 },
       });
     });
 
@@ -124,6 +131,7 @@ describe('UrlService', () => {
       expect(mockPrismaService.url.findUnique).toHaveBeenCalledWith({
         where: { shortUrl },
       });
+      expect(mockPrismaService.url.update).not.toHaveBeenCalled();
     });
   });
 });
