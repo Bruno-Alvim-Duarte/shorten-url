@@ -8,6 +8,7 @@
   "scripts": {
     "build": "npm run build --workspaces",
     "test": "npm run test --workspaces",
+    "test:cov": "npm run test:cov --workspaces",
     "docker:up": "docker compose up -d --build && npm run logs",
     "docker:down": "docker compose down",
     "logs": "docker compose logs -f url-shortener-service",
