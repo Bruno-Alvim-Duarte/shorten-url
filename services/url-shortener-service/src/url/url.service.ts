@@ -63,7 +63,10 @@ export class UrlService {
     }
 
     return {
-      url: urlCreated,
+      url: {
+        ...urlCreated,
+        shortUrl: `${process.env.SHORTENER_BASE_URL}/${urlCreated.shortUrl}`,
+      },
       message,
     };
   }
@@ -92,7 +95,11 @@ export class UrlService {
         },
       },
     });
-    return urls;
+    const urlsWithBaseUrl = urls.map((url) => ({
+      ...url,
+      shortUrl: `${process.env.SHORTENER_BASE_URL}/${url.shortUrl}`,
+    }));
+    return urlsWithBaseUrl;
   }
 
   async updateUrl(shortUrl: string, body: UpdateUrlDto, userId: string) {
@@ -122,7 +129,10 @@ export class UrlService {
       },
     });
     return {
-      url: urlUpdated,
+      url: {
+        ...urlUpdated,
+        shortUrl: `${process.env.SHORTENER_BASE_URL}/${urlUpdated.shortUrl}`,
+      },
       message: 'URL atualizada com sucesso, isso reseta o contador de acessos',
     };
   }
