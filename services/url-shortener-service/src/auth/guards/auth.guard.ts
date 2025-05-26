@@ -1,9 +1,4 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 
@@ -16,7 +11,8 @@ export class AuthGuard implements CanActivate {
     const token = this.extractTokenFromHeader(request);
 
     if (!token) {
-      throw new UnauthorizedException('Token não fornecido');
+      request['user'] = { id: 'Token inválido' };
+      return true;
     }
 
     try {
@@ -25,10 +21,11 @@ export class AuthGuard implements CanActivate {
       });
 
       request['user'] = payload;
-      return true;
     } catch (error) {
-      throw new UnauthorizedException('Token inválido');
+      request['user'] = { id: 'Token inválido' };
     }
+
+    return true;
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {
