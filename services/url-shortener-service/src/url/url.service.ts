@@ -14,6 +14,7 @@ export class UrlService {
 
   async shortenUrl(
     url: string,
+    userId?: string,
   ): Promise<{ shortUrl: string; originalUrl: string }> {
     let shortId: string;
     let existingUrl: any;
@@ -33,14 +34,25 @@ export class UrlService {
       throw new InternalServerErrorException('Erro ao gerar URL encurtada');
     }
 
+    const data: any = {
+      originalUrl: url,
+      shortUrl: shortId,
+    };
+
+    if (userId && userId !== 'Token inválido') {
+      data.userId = userId;
+    }
+
     await this.prisma.url.create({
-      data: {
-        originalUrl: url,
-        shortUrl: shortId,
-      },
+      data,
     });
 
-    return { shortUrl: shortId, originalUrl: url };
+    if (!userId || userId === 'Token inválido') {
+      data.message =
+        'Autentique-se para ter acesso a benefícios como listar, atualizar e remover suas URLs encurtadas';
+    }
+
+    return data;
   }
 
   async getOriginalUrl(shortUrl: string): Promise<{ originalUrl: string }> {

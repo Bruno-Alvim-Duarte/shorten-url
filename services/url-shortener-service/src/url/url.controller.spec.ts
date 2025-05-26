@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UrlController } from './url.controller';
 import { UrlService } from './url.service';
 import { Response } from 'express';
+import { JwtModule } from '@nestjs/jwt';
 
 describe('UrlController', () => {
   let controller: UrlController;
@@ -25,6 +26,7 @@ describe('UrlController', () => {
           useValue: mockUrlService,
         },
       ],
+      imports: [JwtModule],
     }).compile();
 
     controller = module.get<UrlController>(UrlController);
@@ -49,10 +51,13 @@ describe('UrlController', () => {
     it('should creat a shortened URL', async () => {
       mockUrlService.shortenUrl.mockResolvedValueOnce(shortenedUrl);
 
-      const result = await controller.shortenUrl(createUrlDto);
+      const result = await controller.shortenUrl({ id: '1' }, createUrlDto);
 
       expect(result).toEqual(shortenedUrl);
-      expect(mockUrlService.shortenUrl).toHaveBeenCalledWith(createUrlDto.url);
+      expect(mockUrlService.shortenUrl).toHaveBeenCalledWith(
+        createUrlDto.url,
+        '1',
+      );
     });
   });
 

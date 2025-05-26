@@ -43,8 +43,26 @@ describe('UrlService', () => {
   describe('shortenUrl', () => {
     const originalUrl = 'https://example.com';
     const shortId = 'abc123';
+    const userId = '1';
 
-    it('should create a shortened URL successfully', async () => {
+    it('should create a shortened URL successfully with userId', async () => {
+      mockPrismaService.url.findUnique.mockResolvedValueOnce(null);
+      mockPrismaService.url.create.mockResolvedValueOnce({
+        shortUrl: shortId,
+        originalUrl,
+        userId,
+      });
+
+      const result = await service.shortenUrl(originalUrl, userId);
+
+      expect(result).toEqual({
+        shortUrl: expect.any(String),
+        originalUrl,
+        userId,
+      });
+    });
+
+    it('should create a shortened URL successfully without userId', async () => {
       mockPrismaService.url.findUnique.mockResolvedValueOnce(null);
       mockPrismaService.url.create.mockResolvedValueOnce({
         shortUrl: shortId,
@@ -56,11 +74,15 @@ describe('UrlService', () => {
       expect(result).toEqual({
         shortUrl: expect.any(String),
         originalUrl,
+        message:
+          'Autentique-se para ter acesso a benefícios como listar, atualizar e remover suas URLs encurtadas',
       });
       expect(mockPrismaService.url.create).toHaveBeenCalledWith({
         data: {
           originalUrl,
           shortUrl: expect.any(String),
+          message:
+            'Autentique-se para ter acesso a benefícios como listar, atualizar e remover suas URLs encurtadas',
         },
       });
     });
@@ -68,7 +90,7 @@ describe('UrlService', () => {
     it('should throw InternalServerErrorException after 10 failed attempts', async () => {
       mockPrismaService.url.findUnique.mockResolvedValue({ id: 1 });
 
-      await expect(service.shortenUrl(originalUrl)).rejects.toThrow(
+      await expect(service.shortenUrl(originalUrl, userId)).rejects.toThrow(
         InternalServerErrorException,
       );
       expect(mockPrismaService.url.findUnique).toHaveBeenCalledTimes(10);

@@ -3,7 +3,7 @@ import { UserService } from './user.service';
 import { PrismaService } from 'src/prisma.service';
 import { CreateUserDto, UpdateUserDto } from './schemas/user.schema';
 import * as bcrypt from 'bcrypt';
-import { BadRequestException } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 
 jest.mock('bcrypt');
 
@@ -29,6 +29,7 @@ describe('UserService', () => {
           useValue: mockPrismaService,
         },
       ],
+      imports: [JwtModule],
     }).compile();
 
     service = module.get<UserService>(UserService);

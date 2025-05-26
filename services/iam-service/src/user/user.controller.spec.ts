@@ -3,6 +3,7 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { CreateUserDto, UpdateUserDto } from './schemas/user.schema';
 import { BadRequestException } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -18,6 +19,7 @@ describe('UserController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [JwtModule],
       controllers: [UserController],
       providers: [
         {
