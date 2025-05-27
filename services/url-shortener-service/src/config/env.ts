@@ -4,7 +4,6 @@ export const envSchema = z.object({
   DATABASE_URL: z.string().min(1, 'DATABASE_URL é obrigatória'),
   JWT_SECRET: z.string().min(1, 'JWT_SECRET é obrigatória'),
   JWT_REFRESH_SECRET: z.string().min(1, 'JWT_REFRESH_SECRET é obrigatória'),
-  SHORTENER_PORT: z.string().min(1, 'SHORTENER_PORT é obrigatória'),
   SHORTENER_BASE_URL: z.string().min(1, 'SHORTENER_BASE_URL é obrigatória'),
 });
 

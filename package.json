@@ -12,7 +12,8 @@
     "docker:up": "docker compose up -d --build && npm run logs",
     "docker:down": "docker compose down",
     "logs": "docker compose logs -f url-shortener-service",
-    "prepare": "husky"
+    "prepare": "husky",
+    "install:all": "npm install && npm install --workspaces"
   },
   "devDependencies": {
     "husky": "^9.1.7"
