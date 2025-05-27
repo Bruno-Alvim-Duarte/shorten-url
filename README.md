@@ -142,15 +142,13 @@ Siga os passos abaixo para configurar o ambiente de desenvolvimento:
    npm run docker:down
    ```
 
-## Scripts Disponíveis
+## Documentação
 
-- `npm run install:all` - Instala todas as dependências (root + serviços)
-- `npm run docker:up` - Inicia todos os serviços em containers Docker
-- `npm run docker:down` - Para e remove os containers Docker
-- `npm run logs` - Mostra os logs do serviço de URL shortener
-- `npm run build` - Compila todos os serviços
-- `npm run test` - Executa os testes de todos os serviços
-- `npm run test:cov` - Executa os testes com cobertura
+A documentação da API Gateway está disponível em: https://shorten-urlgateway-service.up.railway.app/api-gateway/docs
+
+A documentação do URL Shortener Service está disponível em: https://url-shortener-service.up.railway.app/docs
+
+A documentação do IAM Service está disponível em: https://iam-service.up.railway.app/docs
 
 ## Serviços
 

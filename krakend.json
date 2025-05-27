@@ -149,6 +149,20 @@
           "host": ["{{ env "URL_SHORTENER_SERVICE_URL" }}"]
         }
       ]
+    },
+    {
+      "@comment": "OpenAPI documentation",
+      "endpoint": "/api-gateway/docs",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/api-gateway/docs",
+          "encoding": "no-op",
+          "method": "GET",
+          "host": ["{{ env "URL_SHORTENER_SERVICE_URL" }}"]
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,274 @@
+openapi: 3.1.0
+info:
+  title: URL Shortener API Gateway
+  description: API Gateway documentation for URL Shortener service with authentication.
+  version: v1.0.0
+servers:
+  - url: https://shorten-urlgateway-service.up.railway.app
+    description: Ambiente de Produção
+paths:
+  /api/auth/login:
+    post:
+      summary: User authentication
+      description: Authenticate user and receive access and refresh tokens
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: 'user@example.com'
+                password:
+                  type: string
+                  format: password
+                  example: 'yourpassword'
+      responses:
+        '200':
+          description: Successfully authenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+
+  /api/auth/register:
+    post:
+      summary: User registration
+      description: Register a new user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: 'newuser@example.com'
+                password:
+                  type: string
+                  format: password
+                  example: 'yourpassword'
+                name:
+                  type: string
+                  example: 'John Doe'
+      responses:
+        '201':
+          description: User successfully registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                      name:
+                        type: string
+
+  /api/auth/refresh:
+    post:
+      summary: Refresh access token
+      description: Get a new access token using refresh token
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        '200':
+          description: Tokens successfully refreshed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  access_token:
+                    type: string
+                  refresh_token:
+                    type: string
+
+  /api/urls/shorten-url:
+    post:
+      summary: Create short URL
+      description: Create a shortened version of a URL
+      tags:
+        - URLs
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  example: 'https://www.example.com/very/long/url'
+      responses:
+        '201':
+          description: URL successfully shortened
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  url:
+                    type: object
+                    properties:
+                      shortUrl:
+                        type: string
+                      originalUrl:
+                        type: string
+                      accessCount:
+                        type: integer
+                      createdAt:
+                        type: string
+                        format: date-time
+                  user:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+
+  /api/urls:
+    get:
+      summary: Get all user's URLs
+      description: Retrieve all shortened URLs created by the authenticated user
+      tags:
+        - URLs
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of URLs retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/URL'
+
+  /api/urls/{shortUrl}:
+    get:
+      summary: Redirect to original URL
+      description: Redirect to the original URL using the short URL
+      tags:
+        - URLs
+      parameters:
+        - name: shortUrl
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '302':
+          description: Redirect to original URL
+    delete:
+      summary: Delete short URL
+      description: Delete a shortened URL
+      tags:
+        - URLs
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: shortUrl
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: URL successfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+    put:
+      summary: Update short URL
+      description: Update a shortened URL details
+      tags:
+        - URLs
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: shortUrl
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  example: 'https://www.example.com/new/url'
+      responses:
+        '200':
+          description: URL successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/URL'
+
+components:
+  schemas:
+    URL:
+      type: object
+      properties:
+        shortUrl:
+          type: string
+          example: 'abc123'
+        originalUrl:
+          type: string
+          example: 'https://www.example.com/very/long/url'
+        accessCount:
+          type: integer
+          example: 0
+        createdAt:
+          type: string
+          format: date-time
+        userId:
+          type: string
+          example: 'user123'
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
