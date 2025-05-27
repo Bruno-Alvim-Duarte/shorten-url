@@ -29,8 +29,8 @@ services:
     env_file:
       - path: ./.env
         required: true
-    ports:
-      - ${SHORTENER_PORT}:3000
+    expose:
+      - '3000'
     volumes:
       - ./services/url-shortener-service:/app
       - /app/node_modules
@@ -45,17 +45,30 @@ services:
       dockerfile: services/iam-service/Dockerfile
       target: development
     environment:
-      - PORT=3000
+      - PORT=3001
     env_file:
       - path: ./.env
         required: true
-    ports:
-      - ${IAM_PORT}:3000
+    expose:
+      - '3001'
     volumes:
       - ./services/iam-service:/app
       - /app/node_modules
     depends_on:
       - database
+    restart: always
+
+  krakend:
+    container_name: krakend
+    build:
+      context: .
+      dockerfile: Dockerfile.krakend
+    ports:
+      - '8080:8080'
+    depends_on:
+      - url-shortener-service
+      - iam-service
+    restart: always
 
 volumes:
   pg-data:

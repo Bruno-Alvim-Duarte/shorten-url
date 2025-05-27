@@ -83,7 +83,18 @@ describe('UserService', () => {
           updatedAt: true,
         },
       });
-      expect(result).toEqual(expectedUser);
+      expect(result).toEqual({
+        message: 'User created successfully',
+        user: {
+          id: '1',
+          email: 'test@testing.com',
+          name: 'Test User',
+          password: hashedPassword,
+          active: true,
+          createdAt: expect.any(Date),
+          updatedAt: expect.any(Date),
+        },
+      });
     });
 
     it('should throw BadRequestException when user with email already exists', async () => {

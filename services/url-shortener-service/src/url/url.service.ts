@@ -95,11 +95,13 @@ export class UrlService {
         },
       },
     });
-    const urlsWithBaseUrl = urls.map((url) => ({
-      ...url,
-      shortUrl: `${process.env.SHORTENER_BASE_URL}/${url.shortUrl}`,
-    }));
-    return urlsWithBaseUrl;
+    const urlsWithBaseUrl = urls.map(
+      ({ updatedAt, deletedAt, userId, ...rest }) => ({
+        ...rest,
+        shortUrl: `${process.env.SHORTENER_BASE_URL}/${rest.shortUrl}`,
+      }),
+    );
+    return { urls: urlsWithBaseUrl };
   }
 
   async updateUrl(shortUrl: string, body: UpdateUrlDto, userId: string) {
@@ -114,7 +116,12 @@ export class UrlService {
         'Você não tem permissão para atualizar esta URL',
       );
     }
-    const urlUpdated = await this.prisma.url.update({
+    const {
+      updatedAt,
+      deletedAt,
+      userId: _,
+      ...urlUpdated
+    } = await this.prisma.url.update({
       where: { shortUrl },
       data: {
         originalUrl: body.url,

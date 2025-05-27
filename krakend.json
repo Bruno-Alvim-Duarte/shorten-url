@@ -1,0 +1,154 @@
+{
+  "$schema": "https://www.krakend.io/schema/v3.json",
+  "version": 3,
+  "name": "URL Shortener API Gateway",
+  "port": 8080,
+  "cache_ttl": "3600s",
+  "timeout": "3s",
+  "extra_config": {
+    "security/cors": {
+      "allow_origins": ["*"],
+      "allow_methods": ["GET", "POST", "PUT", "DELETE"],
+      "allow_headers": ["Origin", "Authorization", "Content-Type"],
+      "expose_headers": ["Content-Length"],
+      "max_age": "12h"
+    },
+    "auth/validator": {
+      "alg": "HS256",
+      "disable_jwk_security": true,
+      "keys_to_sign": ["access_token"],
+      "forward_claims": ["sub", "exp", "iat"],
+      "propagate_claims": [["sub", "x-user-id"]]
+    }
+  },
+  "endpoints": [
+    {
+      "@comment": "Login endpoint",
+      "endpoint": "/api/auth/login",
+      "method": "POST",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/auth/login",
+          "encoding": "json",
+          "method": "POST",
+          "host": ["http://iam-service:3001"],
+          "allow": ["accessToken", "refreshToken"]
+        }
+      ]
+    },
+    {
+      "@comment": "Register endpoint",
+      "endpoint": "/api/auth/register",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/users",
+          "encoding": "json",
+          "method": "POST",
+          "host": ["http://iam-service:3001"],
+          "allow": ["message", "user.email", "user.name", "errors"]
+        }
+      ]
+    },
+    {
+      "@comment": "Refresh token endpoint",
+      "endpoint": "/api/auth/refresh",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/auth/refresh",
+          "encoding": "json",
+          "method": "POST",
+          "host": ["http://iam-service:3001"],
+          "allow": ["message", "access_token", "refresh_token"]
+        }
+      ]
+    },
+    {
+      "@comment": "Create short url endpoint",
+      "endpoint": "/api/urls/shorten-url",
+      "method": "POST",
+      "input_headers": ["Authorization", "Content-Type"],
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/shorten-url",
+          "encoding": "json",
+          "method": "POST",
+          "host": ["http://url-shortener-service:3000"],
+          "allow": [
+            "message",
+            "url.shortUrl",
+            "url.originalUrl",
+            "url.accessCount",
+            "url.createdAt",
+            "user.name"
+          ]
+        }
+      ]
+    },
+    {
+      "@comment": "Get all user's short urls endpoint",
+      "endpoint": "/api/urls",
+      "method": "GET",
+      "input_headers": ["Authorization", "Content-Type"],
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/urls",
+          "encoding": "json",
+          "method": "GET",
+          "host": ["http://url-shortener-service:3000"]
+        }
+      ]
+    },
+    {
+      "@comment": "Redirect to original url endpoint",
+      "endpoint": "/api/urls/{shortUrl}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/{shortUrl}",
+          "encoding": "json",
+          "method": "GET",
+          "host": ["http://url-shortener-service:3000"]
+        }
+      ]
+    },
+    {
+      "@comment": "Delete short url endpoint",
+      "endpoint": "/api/urls/{shortUrl}",
+      "method": "DELETE",
+      "input_headers": ["Authorization"],
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/urls/{shortUrl}",
+          "encoding": "json",
+          "method": "DELETE",
+          "host": ["http://url-shortener-service:3000"],
+          "allow": ["message"]
+        }
+      ]
+    },
+    {
+      "@comment": "Update short url endpoint",
+      "endpoint": "/api/urls/{shortUrl}",
+      "method": "PUT",
+      "input_headers": ["Authorization"],
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/urls/{shortUrl}",
+          "encoding": "json",
+          "method": "PUT",
+          "host": ["http://url-shortener-service:3000"]
+        }
+      ]
+    }
+  ]
+}

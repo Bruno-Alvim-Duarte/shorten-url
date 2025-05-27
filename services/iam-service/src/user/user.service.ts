@@ -17,7 +17,7 @@ export class UserService {
       throw new BadRequestException('User with this email already exists');
     }
 
-    return this.prisma.user.create({
+    const userCreated = await this.prisma.user.create({
       data: {
         email: createUserDto.email,
         name: createUserDto.name,
@@ -33,6 +33,11 @@ export class UserService {
         updatedAt: true,
       },
     });
+
+    return {
+      message: 'User created successfully',
+      user: userCreated,
+    };
   }
 
   async findAll() {

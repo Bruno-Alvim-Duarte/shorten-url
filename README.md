@@ -1,13 +1,42 @@
 # URL Shortener Project
 
-Este é um projeto de encurtador de URLs construído com uma arquitetura de microserviços usando NestJS.
+Este é um projeto de encurtador de URLs construído com uma arquitetura de microserviços usando NestJS e KrakenD como API Gateway.
 
 ## Estrutura do Projeto
 
-O projeto é composto por dois serviços principais:
+O projeto é composto por três componentes principais:
 
 - **url-shortener-service**: Responsável pelo encurtamento e redirecionamento de URLs
 - **iam-service**: Serviço de Identity e Access Management para autenticação e autorização
+- **krakend**: API Gateway que gerencia o roteamento e a comunicação entre os serviços
+
+## Arquitetura
+
+```
+                   ┌─────────────────┐
+                   │                 │
+  Cliente ─────────►    KrakenD     │
+                   │  (API Gateway)  │
+                   │     :8080      │
+                   └────────┬────────┘
+                           │
+                           │
+              ┌───────────┴───────────┐
+              │                       │
+    ┌─────────┴──────┐      ┌────────┴─────────┐
+    │                │      │                   │
+    │  IAM Service  │      │ Shortener Service │
+    │    :3001      │      │      :3000        │
+    └────────┬──────┘      └─────────┬─────────┘
+             │                       │
+             └─────────┐  ┌─────────┘
+                       │  │
+                   ┌───┴──┴───┐
+                   │          │
+                   │ Postgres │
+                   │          │
+                   └──────────┘
+```
 
 ## Pré-requisitos
 
@@ -45,17 +74,15 @@ Siga os passos abaixo para configurar o ambiente de desenvolvimento:
    Conteúdo do `.env.example`:
 
    ```env
-   # Porta que vai ser vinculada pra acessar IAM localmente
-   IAM_PORT=
-
-   # Porta que vai ser vinculada pra acessar Shortener localmente
-   SHORTENER_PORT=
-
    # Credenciais que serão usadas para criar o container do postgres
    DB_USER=
    DB_PASS=
    DB_NAME=
    DB_PORT=
+
+   # JWT secrets (devem ser os mesmos em ambos os serviços)
+   JWT_SECRET=
+   JWT_REFRESH_SECRET=
    ```
 
    Conteúdo do `url-shortener-service/.env.example`:
@@ -73,15 +100,12 @@ Siga os passos abaixo para configurar o ambiente de desenvolvimento:
    Conteúdo do `iam-service/.env.example`:
 
    ```env
-
    DATABASE_URL="postgresql://user:password@host:port/databaseName?schema=public"
 
    # ⚠️⚠️ Os JWT secrets precisam ser os mesmo entre os 2 serviços para validar o token em ambos
    JWT_SECRET=
    JWT_REFRESH_SECRET=
    ```
-
-   > **Importante**: Certifique-se de nunca commitar os arquivos `.env` no repositório. Eles já estão incluídos no `.gitignore`.
 
 3. **Instale todas as dependências**
 
@@ -100,11 +124,19 @@ Siga os passos abaixo para configurar o ambiente de desenvolvimento:
    Este comando irá:
 
    - Construir as imagens Docker de todos os serviços
-   - Iniciar os containers
+   - Iniciar os containers (incluindo o KrakenD API Gateway)
    - Executar as migrations do banco de dados automaticamente
    - Iniciar os logs do serviço de URL shortener
 
-5. **Para parar os serviços**
+5. **Acessando os Serviços**
+
+   Após iniciar os containers, os serviços estarão disponíveis através do KrakenD API Gateway:
+
+   - API Gateway: http://localhost:8080
+   - Endpoints de Autenticação: http://localhost:8080/api/auth/\*
+   - Endpoints de URLs: http://localhost:8080/api/urls/\*
+
+6. **Para parar os serviços**
    ```bash
    npm run docker:down
    ```
@@ -136,6 +168,15 @@ Serviço responsável por:
 - Autenticação de usuários
 - Gerenciamento de permissões
 - Controle de acesso
+
+### KrakenD API Gateway
+
+Responsável por:
+
+- Roteamento de requisições para os serviços apropriados
+- Gerenciamento de CORS
+- Rate limiting e cache (configurável)
+- Exposição de uma única porta para acesso aos serviços
 
 ## Desenvolvimento
 
