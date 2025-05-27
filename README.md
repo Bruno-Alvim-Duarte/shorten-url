@@ -74,15 +74,16 @@ Siga os passos abaixo para configurar o ambiente de desenvolvimento:
    Conteúdo do `.env.example`:
 
    ```env
+   # Url que será utilizada para o gateway identificar pra onde tem que direcionar as requisições de IAM
+   IAM_SERVICE_URL="http://iam-service:3001"
+   # Url que será utilizada para o gateway identificar pra onde tem que direcionar as requisições de URL
+   URL_SHORTENER_SERVICE_URL="http://url-shortener-service:3000"
+
    # Credenciais que serão usadas para criar o container do postgres
    DB_USER=
    DB_PASS=
    DB_NAME=
    DB_PORT=
-
-   # JWT secrets (devem ser os mesmos em ambos os serviços)
-   JWT_SECRET=
-   JWT_REFRESH_SECRET=
    ```
 
    Conteúdo do `url-shortener-service/.env.example`:
