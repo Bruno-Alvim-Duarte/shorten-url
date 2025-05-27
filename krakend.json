@@ -163,6 +163,48 @@
           "host": ["{{ env "URL_SHORTENER_SERVICE_URL" }}"]
         }
       ]
+    },
+    {
+      "@comment": "OpenAPI documentation needs",
+      "endpoint": "/api-gateway/docs/swagger-ui.css",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/api-gateway/docs/swagger-ui.css",
+          "encoding": "no-op",
+          "method": "GET",
+          "host": ["{{ env "URL_SHORTENER_SERVICE_URL" }}"]
+        }
+      ]
+    },
+    {
+      "@comment": "OpenAPI documentation needs",
+      "endpoint": "/api-gateway/docs/swagger-ui-bundle.js",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/api-gateway/docs/swagger-ui-bundle.js",
+          "encoding": "no-op",
+          "method": "GET",
+          "host": ["{{ env "URL_SHORTENER_SERVICE_URL" }}"]
+        }
+      ]
+    },
+    {
+      "@comment": "OpenAPI documentation needs",
+      "endpoint": "/api-gateway/docs/swagger-ui-standalone-preset.js",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/api-gateway/docs/swagger-ui-standalone-preset.js",
+          "encoding": "no-op",
+          "method": "GET",
+          "host": ["{{ env "URL_SHORTENER_SERVICE_URL" }}"]
+        }
+      ]
     }
   ]
 }
