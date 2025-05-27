@@ -70,8 +70,8 @@ services:
       - iam-service
     restart: always
     environment:
-      - IAM_SERVICE_URL=http://iam-service:3001
-      - URL_SHORTENER_SERVICE_URL=http://url-shortener-service:3000
+      - IAM_SERVICE_URL=${IAM_SERVICE_URL}
+      - URL_SHORTENER_SERVICE_URL=${URL_SHORTENER_SERVICE_URL}
 
 volumes:
   pg-data:
