@@ -208,12 +208,12 @@
     },
     {
       "@comment": "OpenAPI documentation needs",
-      "endpoint": "/api-gateway/docs/swagger-ui-swagger-ui-init.js",
+      "endpoint": "/api-gateway/docs/swagger-ui-init.js",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
         {
-          "url_pattern": "/api-gateway/docs/swagger-ui-swagger-ui-init.js",
+          "url_pattern": "/api-gateway/docs/swagger-ui-init.js",
           "encoding": "no-op",
           "method": "GET",
           "host": ["{{ env "URL_SHORTENER_SERVICE_URL" }}"]
