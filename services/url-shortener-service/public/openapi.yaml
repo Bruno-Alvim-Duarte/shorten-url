@@ -4,7 +4,7 @@ info:
   description: API Gateway documentation for URL Shortener service with authentication.
   version: v1.0.0
 servers:
-  - url: https://shorten-urlgateway-service.up.railway.app
+  - url: https://shorten-url-gateway-service.up.railway.app
     description: Ambiente de Produção
 paths:
   /api/auth/login:
