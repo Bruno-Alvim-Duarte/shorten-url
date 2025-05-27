@@ -32,7 +32,7 @@
           "url_pattern": "/auth/login",
           "encoding": "json",
           "method": "POST",
-          "host": ["${IAM_SERVICE_URL}"],
+          "host": ["{{ env "IAM_SERVICE_URL" }}"],
           "allow": ["accessToken", "refreshToken"]
         }
       ]
@@ -47,7 +47,7 @@
           "url_pattern": "/users",
           "encoding": "json",
           "method": "POST",
-          "host": ["${IAM_SERVICE_URL}"],
+          "host": ["{{ env "IAM_SERVICE_URL" }}"],
           "allow": ["message", "user.email", "user.name", "errors"]
         }
       ]
@@ -62,7 +62,7 @@
           "url_pattern": "/auth/refresh",
           "encoding": "json",
           "method": "POST",
-          "host": ["${IAM_SERVICE_URL}"],
+          "host": ["{{ env "IAM_SERVICE_URL" }}"],
           "allow": ["message", "access_token", "refresh_token"]
         }
       ]
@@ -78,7 +78,7 @@
           "url_pattern": "/shorten-url",
           "encoding": "json",
           "method": "POST",
-          "host": ["${URL_SHORTENER_SERVICE_URL}"],
+          "host": ["{{ env "URL_SHORTENER_SERVICE_URL" }}"],
           "allow": [
             "message",
             "url.shortUrl",
@@ -101,7 +101,7 @@
           "url_pattern": "/urls",
           "encoding": "json",
           "method": "GET",
-          "host": ["${URL_SHORTENER_SERVICE_URL}"]
+          "host": ["{{ env "URL_SHORTENER_SERVICE_URL" }}"]
         }
       ]
     },
@@ -115,7 +115,7 @@
           "url_pattern": "/{shortUrl}",
           "encoding": "json",
           "method": "GET",
-          "host": ["${URL_SHORTENER_SERVICE_URL}"]
+          "host": ["{{ env "URL_SHORTENER_SERVICE_URL" }}"]
         }
       ]
     },
@@ -130,7 +130,7 @@
           "url_pattern": "/urls/{shortUrl}",
           "encoding": "json",
           "method": "DELETE",
-          "host": ["${URL_SHORTENER_SERVICE_URL}"],
+          "host": ["{{ env "URL_SHORTENER_SERVICE_URL" }}"],
           "allow": ["message"]
         }
       ]
@@ -146,7 +146,7 @@
           "url_pattern": "/urls/{shortUrl}",
           "encoding": "json",
           "method": "PUT",
-          "host": ["${URL_SHORTENER_SERVICE_URL}"]
+          "host": ["{{ env "URL_SHORTENER_SERVICE_URL" }}"]
         }
       ]
     }
