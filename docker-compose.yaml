@@ -25,12 +25,12 @@ services:
       dockerfile: services/url-shortener-service/Dockerfile
       target: development
     environment:
-      - PORT=80
+      - PORT=3000
     env_file:
       - path: ./.env
         required: true
     ports:
-      - ${SHORTENER_PORT}:80
+      - ${SHORTENER_PORT}:3000
     volumes:
       - ./services/url-shortener-service:/app
       - /app/node_modules
@@ -45,12 +45,12 @@ services:
       dockerfile: services/iam-service/Dockerfile
       target: development
     environment:
-      - PORT=80
+      - PORT=3000
     env_file:
       - path: ./.env
         required: true
     ports:
-      - ${IAM_PORT}:80
+      - ${IAM_PORT}:3000
     volumes:
       - ./services/iam-service:/app
       - /app/node_modules
