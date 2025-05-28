@@ -3,28 +3,23 @@
 Decisões:
 
 - meu_dominio.com/aZbKq7 —> aZbKq7 ID —> https://dominiolongo.com/wspass/qwq/sa/sa
-- MySQL - foi exigido um banco de dados relacional. Mas eu escolheria por:
+- MySQL - foi exigido um banco de dados relacional. Mas eu provavelmente escolheria por:
   - MongoDB - Como eu vou precisar de uma ideia de chave - valor aonde a chave é o id e o valor é a url longa mongoDB é uma solução adequada e performática pro caso
-
-Para escalar:
-
-- Trocar MySQL por DynamoDB
-- Optar por usar o nest com fastify
 
 ## Requisitos:
 
-- [ ] Cadastro e autenticação de usuários
-- [ ] URL encurtado para no máximo 6 caracteres
-- [ ] Qualquer um pode solicitar encurtamento.
-- [ ] Usuários Autenticados, devem ser vinculados ao encurtamento
-- [ ] Usuários autenticados devem poder listar, editar o destino, deletar urls deles
-- [ ] Acessos a URL devem ser contabilizados
-- [ ] Quando o usuário listar URL's deve conter a contagem de acessos
-- [ ] Todos registros devem ter createdAt e updatedAt
-- [ ] Deleções lógicas, chave data de exclusão, se tiver nula está válido
-- [ ] README ou CONTRIBUTING explicando como rodar o projeto.
-- [ ] Adicionar aviso caso o usuário encurte sem estar logado
-- [ ] Adicionar a validação de super admin pra atualizar listar e deletar usuários que não o dele
+- [x] Cadastro e autenticação de usuários
+- [x] URL encurtado para no máximo 6 caracteres
+- [x] Qualquer um pode solicitar encurtamento.
+- [x] Usuários Autenticados, devem ser vinculados ao encurtamento
+- [x] Usuários autenticados devem poder listar, editar o destino, deletar urls deles
+- [x] Acessos a URL devem ser contabilizados
+- [x] Quando o usuário listar URL's deve conter a contagem de acessos
+- [x] Todos registros devem ter createdAt e updatedAt
+- [x] Deleções lógicas, chave data de exclusão, se tiver nula está válido
+- [x] README ou CONTRIBUTING explicando como rodar o projeto.
+- [x] Adicionar aviso caso o usuário encurte sem estar logado
+- [x] Adicionar a validação de super admin pra atualizar listar e deletar usuários que não o dele
 
 ## Especificações:
 
@@ -43,27 +38,28 @@ Para escalar:
 
 ### Importantes:
 
-1. Docker compose
-2. Git Tags
-3. Configurar pré commit ou pre push hooks.
-4. Zod pra validação
-5. Swagger
-6. Separa em micro serviços
-7. Código tolerante a falhas.
-8. Deploy
-9. Testes unitários
-10. Deixar no Readme os pontos de melhoria pra escalar horizontalmente
+1. Docker compose ✅
+2. Git Tags ✅
+3. Configurar pré commit ou pre push hooks. ✅
+4. Zod pra validação ✅
+5. Swagger (Api Gateway, IAM-service, Url-shortener-service) ✅
+6. Separa em micro serviços ✅
+7. Código tolerante a falhas. ✅
+8. Deploy (Api Gateway, IAM-service, Url-shortener-service) ✅
+9. Testes unitários ✅
+10. Configurar como serviços separados o IAM do Shortener ✅
+11. Deixar no Readme os pontos de melhoria pra escalar horizontalmente ✅
 
 ### Se der tempo:
 
-1. Github Actions (Lint e testes automatizados)
+1. Github Actions (Lint e testes automatizados) ✅
 2. Lambda/serverless
 3. Observabilidade
-4. Configurar uma Api Gateway KrankeD
+4. Configurar uma Api Gateway KrankeD ✅
 5. Deployments do Kubernetes
 6. Construir funcionalidades a mais que acredite ser interessante para o “domínio do negócio” da aplicação.
 
-### Não sei o que é:
+### Não priorizados:
 
 1. Transformar o sistema em multi tenant.
 2. Construir artefatos do Terraform para deploy.

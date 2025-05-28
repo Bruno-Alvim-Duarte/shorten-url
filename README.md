@@ -173,8 +173,6 @@ Serviço responsável por:
 Responsável por:
 
 - Roteamento de requisições para os serviços apropriados
-- Gerenciamento de CORS
-- Rate limiting e cache (configurável)
 - Exposição de uma única porta para acesso aos serviços
 
 ## Desenvolvimento
@@ -192,13 +190,50 @@ Para desenvolvimento local, após instalar as dependências, você pode:
    npm run logs
    ```
 
-## Contribuição
+## O que será preciso pra escalar horizontalmente
 
-1. Faça o fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/amazing-feature`)
-3. Commit suas mudanças (`git commit -m 'feat: Add some amazing feature'`)
-4. Push para a branch (`git push origin feature/amazing-feature`)
-5. Abra um Pull Request
+Para garantir que o sistema possa escalar horizontalmente de forma eficiente, alguns pontos importantes precisam ser considerados:
+
+- **Implementação de Cache Distribuído**:
+
+  - Utilizar Redis para compartilhar cache entre instâncias
+  - Implementar cache de URLs frequentemente acessadas
+  - Configurar estratégias de invalidação de cache eficientes
+  - Usar cache para reduzir a carga no banco de dados
+
+- **Arquitetura Stateless**:
+
+  - Garantir que nenhuma informação de estado seja armazenada localmente nas instâncias
+  - Mover todas as sessões para um armazenamento distribuído
+  - Manter a arquitetura stateless
+
+- **Otimização do Node.js**:
+
+  - Configurar o Node.js em modo cluster para aproveitar múltiplos cores
+  - Implementar worker threads para operações CPU-intensivas
+  - Monitorar e ajustar o garbage collector
+
+- **Implementação de Load Balancer**:
+
+  - Utilizar um balanceador de carga para distribuir o tráfego entre as instâncias
+
+- **Rate Limiting**:
+
+  - Implementar o rate limiting para proteger o sistema contra ataques de força bruta e abuso de recursos
+  - Api Gateway ja está criado basta configurar o rate limiting no arquivo de configuração do KrakenD
+
+- **Implementação de Observabilidade**:
+
+  - Implementar logging distribuído
+  - Implementar monitoramento de métricas
+  - Implementar tracing distribuído
+  - Isso tudo com a intenção de identificar pontos de falha e melhorar a disponibilidade do sistema
+
+- **Migração para Fastify**:
+  - Substituir Express por Fastify como framework HTTP
+  - Aproveitar o parsing de JSON mais rápido do Fastify
+  - Utilizar o sistema de validação nativo do Fastify
+  - Beneficiar-se do menor overhead por requisição
 
 ## Licença
 
