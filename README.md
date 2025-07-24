@@ -1,3 +1,7 @@
+<p style="align:center">
+  <a href="./README_EN.md">English</a> | <a href=".">Português </a>
+</p>
+
 # URL Shortener Project
 
 Este é um projeto de encurtador de URLs construído com uma arquitetura de microserviços usando NestJS e KrakenD como API Gateway.
